@@ -2,307 +2,327 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vasavi General Store - Mobile Billing</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
-    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Vasavi General Store</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #1e40af;
-            --secondary: #10b981;
-            --bg: #f1f5f9;
-            --white: #ffffff;
-            --border: #cbd5e1;
-            --text-dark: #0f172a;
+            --primary: #10b981;
+            --primary-dark: #059669;
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --text: #1e293b;
+            --border: #e2e8f0;
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-
-        body {
-            font-family: 'Poppins', sans-serif;
-            background-color: var(--bg);
-            color: var(--text-dark);
-            margin: 0;
-            display: flex;
-            flex-direction: row;
-            height: 100vh;
+        body { 
+            font-family: 'Outfit', sans-serif; 
+            background: var(--bg); 
+            color: var(--text); 
+            margin: 0; 
+            overflow-x: hidden;
         }
 
-        /* Mobile Layout Adjustment */
-        @media (max-width: 850px) {
-            body { flex-direction: column; height: auto; }
-            .inventory-section, .billing-section { width: 100% !important; height: auto !important; border: none !important; }
-            .billing-section { border-top: 5px solid var(--primary) !important; padding-bottom: 80px; }
-        }
-
-        /* Left Side: Inventory */
-        .inventory-section {
-            width: 55%;
-            padding: 15px;
-            overflow-y: auto;
-            border-right: 1px solid var(--border);
-        }
-
-        .item-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr); /* Two items in one row */
-            gap: 12px;
-        }
-
-        .item-card {
+        header {
             background: var(--white);
-            border-radius: 10px;
-            padding: 10px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-        }
-
-        .item-img {
-            width: 100%;
-            aspect-ratio: 1/1;
-            background: #e2e8f0;
-            border-radius: 8px;
-            margin-bottom: 8px;
-            object-fit: cover;
-        }
-
-        .item-name { font-weight: 600; font-size: 0.9rem; margin-bottom: 4px; }
-        .item-price { color: var(--primary); font-size: 0.85rem; font-weight: 700; margin-bottom: 10px; }
-
-        .qty-row {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            width: 100%;
-        }
-
-        .qty-input {
-            width: 50%;
-            padding: 8px;
-            border: 1px solid var(--border);
-            border-radius: 5px;
-            text-align: center;
-            font-size: 0.9rem;
-        }
-
-        .add-btn {
-            width: 50%;
-            background: var(--primary);
-            color: white;
-            border: none;
-            padding: 8px;
-            border-radius: 5px;
-            font-weight: 600;
-            cursor: pointer;
-        }
-
-        /* Right Side: Billing */
-        .billing-section {
-            width: 45%;
-            padding: 20px;
-            background: #fff;
-            display: flex;
-            flex-direction: column;
-            overflow-y: auto;
-        }
-
-        .bill-table { width: 100%; border-collapse: collapse; margin-top: 15px; }
-        .bill-table th { text-align: left; font-size: 0.8rem; border-bottom: 2px solid var(--bg); padding: 8px; }
-        .bill-table td { padding: 8px; border-bottom: 1px solid var(--bg); font-size: 0.85rem; }
-
-        .edit-qty { width: 45px; padding: 4px; border: 1px solid #ddd; border-radius: 3px; }
-
-        .totals {
-            margin-top: 20px;
-            background: #f8fafc;
             padding: 15px;
-            border-radius: 10px;
-        }
-
-        .total-line { display: flex; justify-content: space-between; margin-bottom: 5px; }
-        .grand-total { font-size: 1.2rem; font-weight: 700; color: var(--primary); border-top: 1px solid #ddd; padding-top: 10px; }
-
-        .gst-input { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid var(--border); border-radius: 5px; }
-
-        .download-btn {
-            background: var(--secondary);
-            color: white;
-            border: none;
-            padding: 15px;
-            width: 100%;
-            border-radius: 8px;
-            font-weight: 700;
-            font-size: 1rem;
-            cursor: pointer;
-            margin-top: 15px;
-        }
-
-        .remove-x { color: #ef4444; font-weight: bold; cursor: pointer; }
-
-        /* Floating Button for Mobile to scroll to bill */
-        .mobile-bill-trigger {
-            display: none;
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: var(--primary);
-            color: white;
-            padding: 15px 25px;
-            border-radius: 50px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-            text-decoration: none;
+            text-align: center;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
             z-index: 100;
+            background: white;
         }
 
-        @media (max-width: 850px) { .mobile-bill-trigger { display: block; } }
+        header h1 { margin: 0; font-size: 1.4rem; color: var(--primary-dark); }
+
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+
+        /* View Management */
+        .view { display: none; animation: fadeIn 0.3s ease; }
+        .view.active { display: block; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Forms */
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: 600; font-size: 0.9rem; }
+        input, select {
+            width: 100%; padding: 12px; border: 1px solid var(--border);
+            border-radius: 8px; font-size: 1rem; outline: none;
+        }
+        input:focus { border-color: var(--primary); }
+
+        /* Buttons */
+        .btn {
+            width: 100%; padding: 15px; border: none; border-radius: 10px;
+            font-size: 1rem; font-weight: 700; cursor: pointer;
+            transition: 0.2s; margin-top: 10px;
+        }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-outline { background: transparent; border: 1px solid var(--primary); color: var(--primary); }
+
+        /* Store Grid */
+        .store-header { margin-bottom: 20px; font-weight: 700; color: #64748b; }
+        .item-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .item-card {
+            background: white; border-radius: 12px; padding: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05); text-align: center;
+        }
+        .item-img { width: 100%; aspect-ratio: 1/1; background: #f1f5f9; border-radius: 8px; object-fit: cover; }
+        .item-name { font-weight: 600; margin: 8px 0 4px; font-size: 0.95rem; }
+        .item-price { color: var(--primary-dark); font-weight: 700; margin-bottom: 10px; }
+        
+        .qty-ctrl { display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 10px; }
+        .qty-btn { width: 30px; height: 30px; border-radius: 50%; border: 1px solid var(--border); background: white; cursor: pointer; }
+
+        /* Cart & Summary */
+        .cart-item {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 10px 0; border-bottom: 1px solid var(--border);
+        }
+        .summary-box { background: white; padding: 15px; border-radius: 12px; margin-top: 20px; }
+        .summary-row { display: flex; justify-content: space-between; margin-bottom: 8px; }
+        .total-row { font-size: 1.2rem; font-weight: 700; border-top: 1px solid var(--border); pt: 10px; }
+
+        /* Payment */
+        .qr-placeholder {
+            width: 200px; height: 200px; background: #eee; margin: 20px auto;
+            display: flex; align-items: center; justify-content: center; text-align: center;
+            border: 2px dashed #ccc;
+        }
+
+        /* Floating Cart Button */
+        .cart-float {
+            position: fixed; bottom: 20px; right: 20px; background: var(--primary-dark);
+            color: white; padding: 15px 25px; border-radius: 50px; font-weight: 700;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2); z-index: 200;
+        }
     </style>
 </head>
 <body>
 
-    <a href="#billing" class="mobile-bill-trigger">View Bill (₹<span id="floatTotal">0</span>)</a>
+<header>
+    <h1>Vasavi General Store</h1>
+</header>
 
-    <div class="inventory-section">
-        <h2 style="margin-top:0;">Grocery Items</h2>
-        <div class="item-grid" id="itemGrid"></div>
+<div class="container">
+    <div id="view-login" class="view">
+        <h2>Welcome</h2>
+        <p>Please enter your details to start shopping.</p>
+        <div class="form-group"><label>Name</label><input type="text" id="u-name"></div>
+        <div class="form-group"><label>Phone No</label><input type="tel" id="u-phone"></div>
+        <div class="form-group"><label>Door No</label><input type="text" id="u-door"></div>
+        <div class="form-group"><label>Street</label><input type="text" id="u-street"></div>
+        <div class="form-group"><label>Address / Landmark</label><input type="text" id="u-address"></div>
+        <button class="btn btn-primary" onclick="saveUser()">Login & Start Shopping</button>
     </div>
 
-    <div class="billing-section" id="billing">
-        <h2 style="margin-top:0;">Vasavi Store Bill</h2>
-        <input type="text" id="gstIn" class="gst-input" placeholder="GSTIN: Update here">
-        
-        <table class="bill-table">
-            <thead>
-                <tr>
-                    <th>Item</th>
-                    <th>Qty</th>
-                    <th>Price</th>
-                    <th>Total</th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody id="billBody"></tbody>
-        </table>
+    <div id="view-store" class="view">
+        <div class="store-header">Bankapur Store - Items</div>
+        <div class="item-grid" id="item-list"></div>
+        <div style="height: 100px;"></div>
+        <div class="cart-float" id="cart-btn" onclick="nav('cart')">View Cart (₹0)</div>
+    </div>
 
-        <div class="totals">
-            <div class="total-line"><span>Subtotal:</span><span id="sub">₹0</span></div>
-            <div class="total-line"><span>GST (5%):</span><span id="gst">₹0</span></div>
-            <div class="total-line grand-total"><span>Total:</span><span id="grand">₹0</span></div>
+    <div id="view-cart" class="view">
+        <h2>Your Cart</h2>
+        <div id="cart-content"></div>
+        <div class="summary-box">
+            <div class="summary-row"><span>Subtotal</span><span id="cart-sub">₹0</span></div>
+            <button class="btn btn-primary" onclick="nav('checkout')">Proceed to Checkout</button>
+            <button class="btn btn-outline" onclick="nav('store')">Add More Items</button>
         </div>
-
-        <button class="download-btn" onclick="generatePDF()">Download PDF Bill</button>
     </div>
 
-    <script>
-        const groceryItems = [
-            { id: 1, name: "Basmati Rice", price: 95, img: "https://via.placeholder.com/150?text=Rice" },
-            { id: 2, name: "Sunflower Oil", price: 145, img: "IMG_20260331_203707370.jpg" },
-            { id: 3, name: "Sugar", price: 42, img: "https://via.placeholder.com/150?text=Sugar" },
-            { id: 4, name: "Toor Dal", price: 165, img: "https://via.placeholder.com/150?text=Toor+Dal" },
-            { id: 5, name: "Atta (Wheat)", price: 52, img: "https://via.placeholder.com/150?text=Atta" },
-            { id: 6, name: "Salt", price: 25, img: "https://via.placeholder.com/150?text=Salt" },
-            { id: 7, name: "Moong Dal", price: 110, img: "https://via.placeholder.com/150?text=Moong" },
-            { id: 8, name: "Tea Powder", price: 480, img: "https://via.placeholder.com/150?text=Tea" },
-            { id: 9, name: "Coffee Powder", price: 650, img: "https://via.placeholder.com/150?text=Coffee" },
-            { id: 10, name: "Poha", price: 60, img: "https://via.placeholder.com/150?text=Poha" },
-            { id: 11, name: "Ghee (500ml)", price: 350, img: "https://via.placeholder.com/150?text=Ghee" },
-            { id: 12, name: "Peanuts", price: 140, img: "https://via.placeholder.com/150?text=Peanuts" },
-            { id: 13, name: "Mustard Seeds", price: 180, img: "https://via.placeholder.com/150?text=Mustard" },
-            { id: 14, name: "Cumin (Jeera)", price: 450, img: "https://via.placeholder.com/150?text=Jeera" },
-            { id: 15, name: "Turmeric Powder", price: 220, img: "https://via.placeholder.com/150?text=Haldi" },
-            { id: 16, name: "Chili Powder", price: 300, img: "https://via.placeholder.com/150?text=Chili" },
-            { id: 17, name: "Urad Dal", price: 130, img: "https://via.placeholder.com/150?text=Urad" },
-            { id: 18, name: "Chana Dal", price: 90, img: "https://via.placeholder.com/150?text=Chana" },
-            { id: 19, name: "Besan", price: 95, img: "https://via.placeholder.com/150?text=Besan" },
-            { id: 20, name: "Soap Bar", price: 45, img: "https://via.placeholder.com/150?text=Soap" },
-            // Add more items here...
-        ];
+    <div id="view-checkout" class="view">
+        <h2>Delivery Options</h2>
+        <div class="form-group">
+            <label>Choose Method</label>
+            <select id="del-method" onchange="updateFinalBill()">
+                <option value="pickup">Self Pick-up (₹0)</option>
+                <option value="delivery">Home Delivery (+₹40)</option>
+            </select>
+        </div>
+        <div class="summary-box">
+            <div class="summary-row"><span>Items Total</span><span id="check-sub">₹0</span></div>
+            <div class="summary-row"><span>Delivery Fee</span><span id="check-del">₹0</span></div>
+            <div class="summary-row total-row"><span>Grand Total</span><span id="check-total">₹0</span></div>
+        </div>
+        <button class="btn btn-primary" onclick="nav('payment')">Next: Payment</button>
+    </div>
 
-        let cart = [];
+    <div id="view-payment" class="view">
+        <h2>Payment</h2>
+        <p>Scan QR to pay or choose Cash on Delivery.</p>
+        <div class="qr-placeholder">
+            <img src="https://via.placeholder.com/180?text=Your+QR+Here" style="width:100%">
+        </div>
+        <div class="form-group">
+            <label>Payment Mode</label>
+            <select id="pay-mode">
+                <option value="Online (QR)">Already Paid (Scan QR)</option>
+                <option value="COD / Pay Later">Cash on Delivery / Pay Later</option>
+            </select>
+        </div>
+        <button class="btn btn-primary" style="background:#059669" onclick="placeOrder()">Confirm Order</button>
+    </div>
 
-        function renderItems() {
-            const grid = document.getElementById('itemGrid');
-            grid.innerHTML = groceryItems.map(item => `
-                <div class="item-card">
-                    <img src="${item.img}" class="item-img">
-                    <div class="item-name">${item.name}</div>
-                    <div class="item-price">₹${item.price}</div>
-                    <div class="qty-row">
-                        <input type="number" id="q-${item.id}" class="qty-input" value="1" min="0.1" step="0.1">
-                        <button class="add-btn" onclick="addToCart(${item.id})">Add</button>
-                    </div>
-                </div>
-            `).join('');
-        }
+    <div id="view-success" class="view" style="text-align: center;">
+        <div style="font-size: 4rem;">✅</div>
+        <h2>Order Placed!</h2>
+        <p>Your order details have been sent to the store. We will contact you shortly.</p>
+        <button class="btn btn-primary" onclick="resetApp()">Shop Again</button>
+    </div>
+</div>
 
-        function addToCart(id) {
-            const item = groceryItems.find(i => i.id === id);
-            const qty = parseFloat(document.getElementById(`q-${id}`).value);
-            const exists = cart.find(c => c.id === id);
-            if(exists) { exists.qty += qty; } else { cart.push({...item, qty}); }
-            updateUI();
-        }
+<script>
+    // CONFIGURATION
+    const TG_TOKEN = "8668013778:AAEnWA0uY3tDUOQP1uHQEVJdcAGaWgfy4eA";
+    const TG_CHAT_ID = "7217028526";
 
-        function updateUI() {
-            const body = document.getElementById('billBody');
-            body.innerHTML = cart.map((item, index) => `
-                <tr>
-                    <td>${item.name}</td>
-                    <td><input type="number" class="edit-qty" value="${item.qty}" onchange="editQty(${index}, this.value)"></td>
-                    <td>₹${item.price}</td>
-                    <td>₹${(item.price * item.qty).toFixed(0)}</td>
-                    <td class="remove-x" onclick="removeItem(${index})">×</td>
-                </tr>
-            `).join('');
+    const items = [
+        { id: 1, name: "Basmati Rice", price: 95, img: "https://via.placeholder.com/150?text=Rice" },
+        { id: 2, name: "Sunflower Oil", price: 145, img: "https://via.placeholder.com/150?text=Oil" },
+        { id: 3, name: "Sugar", price: 42, img: "https://via.placeholder.com/150?text=Sugar" },
+        { id: 4, name: "Toor Dal", price: 165, img: "https://via.placeholder.com/150?text=Dal" },
+        { id: 5, name: "Soap Pack", price: 120, img: "https://via.placeholder.com/150?text=Soap" },
+        { id: 6, name: "Tea Powder", price: 250, img: "https://via.placeholder.com/150?text=Tea" }
+    ];
 
-            const sub = cart.reduce((acc, curr) => acc + (curr.price * curr.qty), 0);
-            const gst = sub * 0.05;
-            const total = sub + gst;
+    let user = JSON.parse(localStorage.getItem('vasavi_user')) || null;
+    let cart = [];
 
-            document.getElementById('sub').innerText = `₹${sub.toFixed(0)}`;
-            document.getElementById('gst').innerText = `₹${gst.toFixed(0)}`;
-            document.getElementById('grand').innerText = `₹${total.toFixed(0)}`;
-            document.getElementById('floatTotal').innerText = total.toFixed(0);
-        }
+    // --- NAVIGATION & HISTORY API ---
+    function nav(viewId) {
+        window.history.pushState({ view: viewId }, '', `#${viewId}`);
+        renderView(viewId);
+    }
 
-        function editQty(index, val) { cart[index].qty = parseFloat(val); updateUI(); }
-        function removeItem(index) { cart.splice(index, 1); updateUI(); }
+    window.onpopstate = (e) => {
+        const view = (e.state && e.state.view) ? e.state.view : (user ? 'store' : 'login');
+        renderView(view);
+    };
 
-        async function generatePDF() {
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
-            const gstin = document.getElementById('gstIn').value || "N/A";
-            
-            doc.setFontSize(22);
-            doc.text("VASAVI GENERAL STORE", 105, 20, { align: 'center' });
-            doc.setFontSize(10);
-            doc.text(`GSTIN: ${gstin}`, 105, 28, { align: 'center' });
-            doc.text(`Date: ${new Date().toLocaleDateString()}`, 105, 34, { align: 'center' });
+    function renderView(viewId) {
+        document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+        const target = document.getElementById(`view-${viewId}`);
+        if(target) target.classList.add('active');
+        if(viewId === 'store') renderStore();
+        if(viewId === 'cart') renderCart();
+        if(viewId === 'checkout') updateFinalBill();
+    }
 
-            const data = cart.map(i => [i.name, i.qty + " kg", "Rs." + i.price, "Rs." + (i.price * i.qty).toFixed(0)]);
-            doc.autoTable({
-                startY: 45,
-                head: [['Item', 'Quantity', 'Rate', 'Total']],
-                body: data,
-                headStyles: { fillColor: [30, 64, 175] }
+    // --- USER LOGIC ---
+    function saveUser() {
+        const u = {
+            name: document.getElementById('u-name').value,
+            phone: document.getElementById('u-phone').value,
+            door: document.getElementById('u-door').value,
+            street: document.getElementById('u-street').value,
+            addr: document.getElementById('u-address').value
+        };
+        if(!u.name || !u.phone) return alert("Name and Phone are required!");
+        user = u;
+        localStorage.setItem('vasavi_user', JSON.stringify(u));
+        nav('store');
+    }
+
+    // --- STORE LOGIC ---
+    function renderStore() {
+        const grid = document.getElementById('item-list');
+        grid.innerHTML = items.map(i => `
+            <div class="item-card">
+                <img src="${i.img}" class="item-img">
+                <div class="item-name">${i.name}</div>
+                <div class="item-price">₹${i.price}</div>
+                <button class="btn btn-primary" style="padding:8px" onclick="addToCart(${i.id})">Add to Cart</button>
+            </div>
+        `).join('');
+    }
+
+    function addToCart(id) {
+        const item = items.find(i => i.id === id);
+        const exists = cart.find(c => c.id === id);
+        if(exists) exists.qty++; else cart.push({...item, qty: 1});
+        updateCartBtn();
+    }
+
+    function updateCartBtn() {
+        const total = cart.reduce((s, i) => s + (i.price * i.qty), 0);
+        document.getElementById('cart-btn').innerText = `View Cart (₹${total})`;
+    }
+
+    // --- CART LOGIC ---
+    function renderCart() {
+        const cont = document.getElementById('cart-content');
+        if(cart.length === 0) { cont.innerHTML = "<p>Your cart is empty.</p>"; return; }
+        cont.innerHTML = cart.map((i, idx) => `
+            <div class="cart-item">
+                <div><b>${i.name}</b><br><small>₹${i.price} x ${i.qty}</small></div>
+                <div style="font-weight:700">₹${i.price * i.qty}</div>
+            </div>
+        `).join('');
+        const total = cart.reduce((s, i) => s + (i.price * i.qty), 0);
+        document.getElementById('cart-sub').innerText = `₹${total}`;
+    }
+
+    function updateFinalBill() {
+        const sub = cart.reduce((s, i) => s + (i.price * i.qty), 0);
+        const method = document.getElementById('del-method').value;
+        const delFee = (method === 'delivery') ? 40 : 0;
+        document.getElementById('check-sub').innerText = `₹${sub}`;
+        document.getElementById('check-del').innerText = `₹${delFee}`;
+        document.getElementById('check-total').innerText = `₹${sub + delFee}`;
+    }
+
+    // --- TELEGRAM INTEGRATION ---
+    async function placeOrder() {
+        const method = document.getElementById('del-method').value;
+        const payMode = document.getElementById('pay-mode').value;
+        const sub = cart.reduce((s, i) => s + (i.price * i.qty), 0);
+        const delFee = (method === 'delivery') ? 40 : 0;
+        const total = sub + delFee;
+
+        // Construct Message
+        let msg = `🛍 *NEW ORDER: VASAVI STORE*\n\n`;
+        msg += `👤 *Customer:* ${user.name}\n`;
+        msg += `📞 *Phone:* ${user.phone}\n`;
+        msg += `🏠 *Address:* ${user.door}, ${user.street}, ${user.addr}\n\n`;
+        msg += `🛒 *Items:*\n`;
+        cart.forEach(i => { msg += `- ${i.name} (x${i.qty}): ₹${i.price * i.qty}\n`; });
+        msg += `\n📦 *Delivery:* ${method.toUpperCase()}\n`;
+        msg += `💳 *Payment:* ${payMode}\n`;
+        msg += `💰 *TOTAL BILL: ₹${total}*`;
+
+        const url = `https://api.telegram.org/bot${TG_TOKEN}/sendMessage`;
+        
+        try {
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ chat_id: TG_CHAT_ID, text: msg, parse_mode: 'Markdown' })
             });
-
-            const finalY = doc.lastAutoTable.finalY + 10;
-            const sub = cart.reduce((acc, curr) => acc + (curr.price * curr.qty), 0);
-            doc.text(`Subtotal: Rs. ${sub.toFixed(0)}`, 140, finalY);
-            doc.text(`GST (5%): Rs. ${(sub * 0.05).toFixed(0)}`, 140, finalY + 7);
-            doc.setFontSize(14);
-            doc.text(`Grand Total: Rs. ${(sub * 1.05).toFixed(0)}`, 140, finalY + 16);
-
-            doc.save("Vasavi_Store_Bill.pdf");
+            if(response.ok) nav('success'); else alert("Error sending order. Try again.");
+        } catch (e) {
+            alert("Network error. Please check internet.");
         }
+    }
 
-        renderItems();
-    </script>
+    function resetApp() {
+        cart = [];
+        updateCartBtn();
+        nav('store');
+    }
+
+    // --- INIT ---
+    if(!user) {
+        nav('login');
+    } else {
+        nav('store');
+    }
+</script>
+
 </body>
 </html>
-
