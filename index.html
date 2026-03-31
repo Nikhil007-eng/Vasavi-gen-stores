@@ -13,12 +13,12 @@
         body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding-bottom: 80px; }
         
         header { background: white; padding: 15px; text-align: center; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; }
-        header h1 { margin: 0; font-size: 1.2rem; color: var(--primary); }
+        header h1 { margin: 0; font-size: 1.1rem; color: var(--primary); text-transform: uppercase; letter-spacing: 1px; }
 
         .container { max-width: 500px; margin: 0 auto; padding: 15px; }
         .view { display: none; animation: slideUp 0.3s ease; }
         .view.active { display: block; }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; } }
 
         .card { background: white; padding: 20px; border-radius: 18px; border: 1px solid var(--border); margin-bottom: 15px; }
         label { display: block; font-size: 0.8rem; font-weight: 600; color: #64748b; margin-bottom: 4px; }
@@ -28,18 +28,22 @@
         .btn-primary { background: var(--primary); color: white; }
         .btn-outline { background: transparent; border: 2px solid var(--primary); color: var(--primary); margin-top: 10px; }
 
-        /* Store Grid - Items with Images */
+        /* Login Logo */
+        .login-logo { width: 100px; height: 100px; margin: 0 auto 20px; display: block; border-radius: 20px; }
+
+        /* Store Grid - No Logo Fallback */
         .item-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         .item-card { background: white; border-radius: 14px; padding: 10px; text-align: center; border: 1px solid var(--border); }
-        .item-img { width: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 10px; margin-bottom: 8px; background: #f1f5f9; }
+        .item-img { width: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 10px; margin-bottom: 8px; background: #eaeff2; }
         .item-name { font-weight: 600; font-size: 0.85rem; margin-bottom: 4px; height: 35px; overflow: hidden; }
         .item-price { color: var(--primary); font-weight: 700; font-size: 0.95rem; margin-bottom: 10px; }
 
         .cart-float { position: fixed; bottom: 20px; left: 5%; width: 90%; background: #0f172a; color: white; padding: 18px; border-radius: 50px; text-align: center; font-weight: 700; z-index: 1000; display: none; }
 
-        /* Bill Template - TEXT ONLY (No Logo/QR) */
+        /* Bill Template with Logo */
         #bill-template { width: 450px; padding: 40px; background: white; color: black; position: absolute; left: -9999px; top: 0; border: 1px solid #000; }
-        .bill-header { text-align: center; border-bottom: 2px solid #000; margin-bottom: 20px; padding-bottom: 10px; }
+        .bill-header { text-align: center; border-bottom: 2px solid #000; margin-bottom: 20px; padding-bottom: 15px; }
+        .bill-logo { width: 80px; height: 80px; margin-bottom: 10px; }
         .bill-table { width: 100%; border-collapse: collapse; margin: 20px 0; }
         .bill-table th { text-align: left; border-bottom: 1px solid #000; padding: 8px; font-weight: bold; }
         .bill-table td { padding: 8px; border-bottom: 1px solid #eee; }
@@ -50,16 +54,17 @@
 
 <div id="bill-template">
     <div class="bill-header">
+        <img src="logo.png" class="bill-logo" alt="Store Logo">
         <h1 style="margin:0">VASAVI GENERAL STORE</h1>
-        <p style="margin:5px 0">Bankapur Store Order Receipt</p>
+        <p style="margin:5px 0">Order Receipt - Bankapur Store</p>
     </div>
-    <div id="bill-info" style="margin-bottom: 20px; line-height: 1.6;"></div>
+    <div id="bill-info" style="margin-bottom: 20px; line-height: 1.6; font-size: 0.95rem;"></div>
     <table class="bill-table">
         <thead><tr><th>Item</th><th>Qty</th><th>Price</th><th>Total</th></tr></thead>
-        <tbody id="bill-items"></tbody>
+        <tbody id="bill-items-body"></tbody>
     </table>
     <div id="bill-grand-total" class="bill-total"></div>
-    <p style="text-align:center; font-size: 0.8rem; margin-top: 30px; border-top: 1px solid #000; padding-top: 10px;">*** Digital Copy - No Signature Required ***</p>
+    <p style="text-align:center; font-size: 0.8rem; margin-top: 30px; border-top: 1px solid #000; padding-top: 10px;">Thank you for shopping with us!</p>
 </div>
 
 <header><h1>Vasavi General Store</h1></header>
@@ -67,64 +72,66 @@
 <div class="container">
     <div id="view-login" class="view">
         <div class="card">
-            <h2>Welcome</h2>
-            <label>Name</label><input type="text" id="u-name">
-            <label>Phone</label><input type="tel" id="u-phone">
+            <img src="logo.png" class="login-logo" alt="Vasavi Logo">
+            <h2 style="text-align:center; margin-top:0">Customer Login</h2>
+            <label>Name</label><input type="text" id="u-name" placeholder="Enter Name">
+            <label>Phone</label><input type="tel" id="u-phone" placeholder="Mobile Number">
             <label>Door No</label><input type="text" id="u-door">
             <label>Street</label><input type="text" id="u-street">
-            <label>Landmark/Address</label><input type="text" id="u-addr">
-            <button class="btn btn-primary" onclick="doLogin()">Login & Start Shopping</button>
+            <label>Address/Landmark</label><input type="text" id="u-addr">
+            <button class="btn btn-primary" onclick="doLogin()">Login & Shop</button>
         </div>
     </div>
 
     <div id="view-store" class="view">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-            <p style="font-weight:600; color:#64748b">(Bankapur store)</p>
-            <button class="btn" style="width:auto; padding:5px 10px; font-size:0.7rem; background:#eee;" onclick="logout()">Logout</button>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+            <p style="font-weight:600; color:#64748b; margin:0">(Bankapur store)</p>
+            <button class="btn" style="width:auto; padding:6px 12px; font-size:0.75rem; background:#f1f5f9; border:1px solid #e2e8f0; border-radius:8px;" onclick="logout()">Logout</button>
         </div>
         <div class="item-grid" id="product-list"></div>
-        <div id="cart-float-btn" class="cart-float" onclick="nav('cart')">View Cart</div>
+        <div id="cart-float-btn" class="cart-float" onclick="nav('cart')">View Cart (₹0)</div>
     </div>
 
     <div id="view-cart" class="view">
         <div class="card">
-            <h2>My Cart</h2>
-            <div id="cart-items-list"></div>
-            <div style="border-top:2px solid #f1f5f9; padding-top:10px; margin-top:10px; font-weight:700;">Subtotal: <span id="cart-sub">₹0</span></div>
-            <button class="btn btn-primary" style="margin-top:20px" onclick="nav('checkout')">Proceed</button>
+            <h2 style="margin-top:0">My Cart</h2>
+            <div id="cart-items-content"></div>
+            <div style="border-top:2px solid #f8fafc; padding-top:15px; margin-top:15px; font-weight:700;">Subtotal: <span id="cart-sub">₹0</span></div>
+            <button class="btn btn-primary" style="margin-top:20px" onclick="nav('checkout')">Confirm Items</button>
             <button class="btn btn-outline" onclick="nav('store')">Add More</button>
         </div>
     </div>
 
     <div id="view-checkout" class="view">
         <div class="card">
-            <h2>Delivery Option</h2>
+            <h2>Delivery</h2>
             <select id="del-choice" onchange="calcTotal()">
                 <option value="pickup">Self Pick-up (₹0)</option>
                 <option value="home">Home Delivery (+₹40)</option>
             </select>
-            <div id="check-summary" style="padding:10px; background:#f8fafc; border-radius:10px;"></div>
-            <button class="btn btn-primary" onclick="nav('payment')">Next</button>
+            <div id="check-summary" style="padding:15px; background:var(--bg); border-radius:12px; margin-top:10px;"></div>
+            <button class="btn btn-primary" onclick="nav('payment')">Proceed to Payment</button>
         </div>
     </div>
 
     <div id="view-payment" class="view">
         <div class="card" style="text-align:center">
-            <h2>Payment Mode</h2>
-            <select id="pay-choice">
-                <option value="Paid Online">Already Paid (Online)</option>
-                <option value="COD">Cash on Delivery</option>
+            <h2>Payment</h2>
+            <p style="font-size:0.9rem; color:#64748b">Please select payment mode</p>
+            <select id="pay-choice" style="margin-top:10px">
+                <option value="Online Paid">Paid Online (GPay/PhonePe)</option>
+                <option value="Cash on Delivery">Cash on Delivery</option>
             </select>
-            <button id="place-order-btn" class="btn btn-primary" onclick="placeOrder()">Place Order & Send Bill</button>
+            <button id="final-btn" class="btn btn-primary" style="margin-top:10px" onclick="sendOrder()">Confirm Order</button>
         </div>
     </div>
 
-    <div id="view-success" class="view" style="text-align:center;">
-        <div style="font-size:5rem">✅</div>
-        <h2>Order Confirmed!</h2>
-        <p>The store has received your order image.</p>
-        <button id="download-btn" class="btn btn-primary" style="background:#2563eb">Download Receipt (Image)</button>
-        <button class="btn btn-outline" onclick="location.reload()">Back to Store</button>
+    <div id="view-success" class="view" style="text-align:center; padding-top:50px;">
+        <div style="font-size:5rem">📜</div>
+        <h2>Order Successful!</h2>
+        <p>A copy of your bill has been sent to the store bot.</p>
+        <button id="dl-btn" class="btn btn-primary" style="background:#2563eb">Download Bill (PNG)</button>
+        <button class="btn btn-outline" onclick="location.reload()">New Order</button>
     </div>
 </div>
 
@@ -132,14 +139,13 @@
     const TG_TOKEN = "8668013778:AAEnWA0uY3tDUOQP1uHQEVJdcAGaWgfy4eA";
     const TG_ID = "7217028526";
 
-    // ITEM LIST (Add your image paths in the 'img' property)
     const items = [
         { id: 1, name: "Basmati Rice (1kg)", price: 95, img: "rice.png" },
         { id: 2, name: "Sunflower Oil (1L)", price: 145, img: "oil.png" },
         { id: 3, name: "Sugar (1kg)", price: 42, img: "sugar.png" },
         { id: 4, name: "Toor Dal (1kg)", price: 165, img: "dal.png" },
-        { id: 5, name: "Soap Pack", price: 120, img: "soap.png" },
-        { id: 6, name: "Tea Powder", price: 250, img: "tea.png" }
+        { id: 5, name: "Tea Powder", price: 250, img: "tea.png" },
+        { id: 6, name: "Salt (1kg)", price: 25, img: "salt.png" }
     ];
 
     let cart = [];
@@ -162,7 +168,7 @@
 
     function doLogin() {
         user = { n: document.getElementById('u-name').value, p: document.getElementById('u-phone').value, dn: document.getElementById('u-door').value, st: document.getElementById('u-street').value, ad: document.getElementById('u-addr').value };
-        if(!user.n || !user.p) return alert("Fill all details!");
+        if(!user.n || !user.p) return alert("Please fill Name and Phone!");
         localStorage.setItem('vasavi_user', JSON.stringify(user));
         nav('store');
     }
@@ -172,10 +178,10 @@
     function renderStore() {
         document.getElementById('product-list').innerHTML = items.map(i => `
             <div class="item-card">
-                <img src="${i.img}" class="item-img" onerror="this.src='logo.png'">
+                <img src="${i.img}" class="item-img" onerror="this.src=''; this.style.backgroundColor='#e2e8f0';">
                 <div class="item-name">${i.name}</div>
                 <div class="item-price">₹${i.price}</div>
-                <button class="btn btn-primary" style="padding:8px; font-size:0.8rem; border-radius:8px" onclick="addToCart(${i.id})">Add to Cart</button>
+                <button class="btn btn-primary" style="padding:8px; font-size:0.8rem;" onclick="addToCart(${i.id})">Add to Cart</button>
             </div>`).join('');
     }
 
@@ -188,44 +194,42 @@
     }
 
     function renderCart() {
-        document.getElementById('cart-items-list').innerHTML = cart.map(i => `<div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid #f1f5f9"><span>${i.name} x${i.qty}</span><b>₹${i.price*i.qty}</b></div>`).join('');
+        document.getElementById('cart-items-content').innerHTML = cart.map(i => `<div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid #f1f5f9"><span>${i.name} x${i.qty}</span><b>₹${i.price*i.qty}</b></div>`).join('');
         document.getElementById('cart-sub').innerText = `₹${cart.reduce((s,i)=>s+(i.price*i.qty),0)}`;
     }
 
     function calcTotal() {
         const s = cart.reduce((s,i)=>s+(i.price*i.qty),0), d = document.getElementById('del-choice').value === 'home' ? 40 : 0;
-        document.getElementById('check-summary').innerHTML = `<p>Subtotal: ₹${s}</p><p>Delivery: ₹${d}</p><h3>Total: ₹${s+d}</h3>`;
+        document.getElementById('check-summary').innerHTML = `<p>Items: ₹${s}</p><p>Delivery: ₹${d}</p><h3 style="color:var(--primary); margin:0;">Total: ₹${s+d}</h3>`;
     }
 
-    async function placeOrder() {
-        const btn = document.getElementById('place-order-btn');
-        btn.innerText = "Generating Bill..."; btn.disabled = true;
+    async function sendOrder() {
+        const btn = document.getElementById('final-btn');
+        btn.innerText = "Processing..."; btn.disabled = true;
 
-        const sub = cart.reduce((s,i)=>s+(i.price*i.qty),0), d = document.getElementById('del-choice').value === 'home' ? 40 : 0, total = sub + d;
+        const sub = cart.reduce((s,i)=>s+(i.price*i.qty),0), del = document.getElementById('del-choice').value === 'home' ? 40 : 0, total = sub + del;
 
-        // 1. Fill Text Bill
-        document.getElementById('bill-info').innerHTML = `<b>Customer:</b> ${user.n} (${user.p})<br><b>Address:</b> ${user.dn}, ${user.st}, ${user.ad}<br><b>Mode:</b> ${document.getElementById('del-choice').value} | <b>Pay:</b> ${document.getElementById('pay-choice').value}`;
-        document.getElementById('bill-items').innerHTML = cart.map(i => `<tr><td>${i.name}</td><td>${i.qty}</td><td>₹${i.price}</td><td>₹${i.price*i.qty}</td></tr>`).join('') + (d > 0 ? `<tr><td>Delivery Fee</td><td>1</td><td>₹40</td><td>₹40</td></tr>` : "");
+        // 1. Setup Bill Template
+        document.getElementById('bill-info').innerHTML = `<b>Customer:</b> ${user.n} (${user.p})<br><b>Address:</b> ${user.dn}, ${user.st}, ${user.ad}<br><b>Delivery:</b> ${document.getElementById('del-choice').value.toUpperCase()}<br><b>Payment:</b> ${document.getElementById('pay-choice').value}`;
+        document.getElementById('bill-items-body').innerHTML = cart.map(i => `<tr><td>${i.name}</td><td>${i.qty}</td><td>₹${i.price}</td><td>₹${i.price*i.qty}</td></tr>`).join('') + (del > 0 ? `<tr><td>Delivery Fee</td><td>1</td><td>₹40</td><td>₹40</td></tr>` : "");
         document.getElementById('bill-grand-total').innerText = `GRAND TOTAL: ₹${total}`;
 
-        // 2. Generate Image
+        // 2. Generate and Send
         const canvas = await html2canvas(document.getElementById('bill-template'));
         canvas.toBlob(async (blob) => {
             billBlob = blob;
-            const formData = new FormData();
-            formData.append('chat_id', TG_ID);
-            formData.append('photo', blob, 'order.png');
-            formData.append('caption', `🛍 New Order: ${user.n}\nTotal: ₹${total}`);
+            const fd = new FormData();
+            fd.append('chat_id', TG_ID);
+            fd.append('photo', blob, 'order_bill.png');
+            fd.append('caption', `🆕 ORDER: ${user.n}\nTotal Amount: ₹${total}`);
 
-            // 3. Send to Telegram
-            await fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendPhoto`, { method: 'POST', body: formData });
+            await fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendPhoto`, { method: 'POST', body: fd });
 
-            // 4. Set download link
-            document.getElementById('download-btn').onclick = () => {
-                const link = document.createElement('a');
-                link.href = URL.createObjectURL(blob);
-                link.download = `Bill_Vasavi_${Date.now()}.png`;
-                link.click();
+            document.getElementById('dl-btn').onclick = () => {
+                const a = document.createElement('a');
+                a.href = URL.createObjectURL(blob);
+                a.download = `Receipt_Vasavi_${Date.now()}.png`;
+                a.click();
             };
             nav('success');
         });
