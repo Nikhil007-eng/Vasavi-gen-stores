@@ -1,0 +1,1 @@
+# Vasavi-gen-stores
