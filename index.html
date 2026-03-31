@@ -6,18 +6,14 @@
     <title>Vasavi General Store</title>
     <link rel="manifest" href="manifest.json">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         :root { --primary: #10b981; --bg: #f8fafc; --border: #e2e8f0; --text: #1e293b; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
         body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding-bottom: 80px; }
         
-        header { 
-            background: white; padding: 12px; display: flex; align-items: center; 
-            justify-content: center; border-bottom: 1px solid var(--border); 
-            position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 5px rgba(0,0,0,0.02);
-        }
-        header img { height: 32px; margin-right: 10px; border-radius: 5px; }
-        header h1 { margin: 0; font-size: 1.1rem; color: var(--primary); letter-spacing: 0.5px; }
+        header { background: white; padding: 15px; text-align: center; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; }
+        header h1 { margin: 0; font-size: 1.2rem; color: var(--primary); }
 
         .container { max-width: 500px; margin: 0 auto; padding: 15px; }
         .view { display: none; animation: slideUp 0.3s ease; }
@@ -26,104 +22,109 @@
 
         .card { background: white; padding: 20px; border-radius: 18px; border: 1px solid var(--border); margin-bottom: 15px; }
         label { display: block; font-size: 0.8rem; font-weight: 600; color: #64748b; margin-bottom: 4px; }
-        input, select { width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid var(--border); border-radius: 10px; font-size: 1rem; background: #fdfdfd; }
+        input, select { width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid var(--border); border-radius: 10px; font-size: 1rem; }
         
-        .btn { width: 100%; padding: 16px; border: none; border-radius: 12px; font-weight: 700; font-size: 1rem; cursor: pointer; transition: 0.2s active; }
-        .btn:active { transform: scale(0.98); opacity: 0.9; }
+        .btn { width: 100%; padding: 16px; border: none; border-radius: 12px; font-weight: 700; font-size: 1rem; cursor: pointer; }
         .btn-primary { background: var(--primary); color: white; }
         .btn-outline { background: transparent; border: 2px solid var(--primary); color: var(--primary); margin-top: 10px; }
-        .btn-logout { background: #f1f5f9; color: #64748b; padding: 8px 12px; font-size: 0.75rem; border-radius: 8px; width: auto; margin-bottom: 15px; display: inline-block; }
 
-        /* Two items in one row */
+        /* Store Grid - Items with Images */
         .item-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .item-card { background: white; border-radius: 14px; padding: 10px; text-align: center; border: 1px solid var(--border); box-shadow: 0 2px 4px rgba(0,0,0,0.03); }
-        .item-img { width: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 10px; margin-bottom: 8px; }
+        .item-card { background: white; border-radius: 14px; padding: 10px; text-align: center; border: 1px solid var(--border); }
+        .item-img { width: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 10px; margin-bottom: 8px; background: #f1f5f9; }
         .item-name { font-weight: 600; font-size: 0.85rem; margin-bottom: 4px; height: 35px; overflow: hidden; }
         .item-price { color: var(--primary); font-weight: 700; font-size: 0.95rem; margin-bottom: 10px; }
 
-        .cart-item { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #f1f5f9; }
-        .cart-float { 
-            position: fixed; bottom: 20px; left: 5%; width: 90%; background: #0f172a; 
-            color: white; padding: 18px; border-radius: 50px; text-align: center; 
-            font-weight: 700; z-index: 1000; box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-        }
-        
-        .summary-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.95rem; }
+        .cart-float { position: fixed; bottom: 20px; left: 5%; width: 90%; background: #0f172a; color: white; padding: 18px; border-radius: 50px; text-align: center; font-weight: 700; z-index: 1000; display: none; }
+
+        /* Bill Template - TEXT ONLY (No Logo/QR) */
+        #bill-template { width: 450px; padding: 40px; background: white; color: black; position: absolute; left: -9999px; top: 0; border: 1px solid #000; }
+        .bill-header { text-align: center; border-bottom: 2px solid #000; margin-bottom: 20px; padding-bottom: 10px; }
+        .bill-table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+        .bill-table th { text-align: left; border-bottom: 1px solid #000; padding: 8px; font-weight: bold; }
+        .bill-table td { padding: 8px; border-bottom: 1px solid #eee; }
+        .bill-total { text-align: right; font-weight: 700; font-size: 1.4rem; margin-top: 20px; }
     </style>
 </head>
 <body>
 
-<header>
-    <img src="logo.png" alt="Logo" onerror="this.style.display='none'">
-    <h1>Vasavi General Store</h1>
-</header>
+<div id="bill-template">
+    <div class="bill-header">
+        <h1 style="margin:0">VASAVI GENERAL STORE</h1>
+        <p style="margin:5px 0">Bankapur Store Order Receipt</p>
+    </div>
+    <div id="bill-info" style="margin-bottom: 20px; line-height: 1.6;"></div>
+    <table class="bill-table">
+        <thead><tr><th>Item</th><th>Qty</th><th>Price</th><th>Total</th></tr></thead>
+        <tbody id="bill-items"></tbody>
+    </table>
+    <div id="bill-grand-total" class="bill-total"></div>
+    <p style="text-align:center; font-size: 0.8rem; margin-top: 30px; border-top: 1px solid #000; padding-top: 10px;">*** Digital Copy - No Signature Required ***</p>
+</div>
+
+<header><h1>Vasavi General Store</h1></header>
 
 <div class="container">
     <div id="view-login" class="view">
         <div class="card">
-            <h2 style="margin-top:0">Welcome</h2>
-            <p style="font-size: 0.9rem; color: #64748b;">Please enter your delivery details.</p>
-            <label>Full Name</label><input type="text" id="u-name" placeholder="Name">
-            <label>Phone Number</label><input type="tel" id="u-phone" placeholder="99xxx xxxxx">
-            <label>Door No</label><input type="text" id="u-door" placeholder="House/Flat No">
-            <label>Street</label><input type="text" id="u-street" placeholder="Street Name">
-            <label>Address / Landmark</label><input type="text" id="u-addr" placeholder="Area details">
+            <h2>Welcome</h2>
+            <label>Name</label><input type="text" id="u-name">
+            <label>Phone</label><input type="tel" id="u-phone">
+            <label>Door No</label><input type="text" id="u-door">
+            <label>Street</label><input type="text" id="u-street">
+            <label>Landmark/Address</label><input type="text" id="u-addr">
             <button class="btn btn-primary" onclick="doLogin()">Login & Start Shopping</button>
         </div>
     </div>
 
     <div id="view-store" class="view">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-            <p style="font-weight: 600; color: #64748b; margin: 0;">(Bankapur store)</p>
-            <button class="btn btn-logout" onclick="logout()">Logout / Edit Address</button>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+            <p style="font-weight:600; color:#64748b">(Bankapur store)</p>
+            <button class="btn" style="width:auto; padding:5px 10px; font-size:0.7rem; background:#eee;" onclick="logout()">Logout</button>
         </div>
         <div class="item-grid" id="product-list"></div>
-        <div id="cart-float-btn" class="cart-float" onclick="nav('cart')">View Cart (₹0)</div>
+        <div id="cart-float-btn" class="cart-float" onclick="nav('cart')">View Cart</div>
     </div>
 
     <div id="view-cart" class="view">
         <div class="card">
-            <h2 style="margin-top:0">My Cart</h2>
-            <div id="cart-items"></div>
-            <div style="margin-top:15px; border-top:2px solid var(--bg); padding-top:15px;">
-                <div class="summary-row"><span>Items Total:</span><b id="cart-total">₹0</b></div>
-            </div>
-            <button class="btn btn-primary" style="margin-top:20px" onclick="nav('checkout')">Proceed to Order</button>
-            <button class="btn btn-outline" onclick="nav('store')">Add More Items</button>
+            <h2>My Cart</h2>
+            <div id="cart-items-list"></div>
+            <div style="border-top:2px solid #f1f5f9; padding-top:10px; margin-top:10px; font-weight:700;">Subtotal: <span id="cart-sub">₹0</span></div>
+            <button class="btn btn-primary" style="margin-top:20px" onclick="nav('checkout')">Proceed</button>
+            <button class="btn btn-outline" onclick="nav('store')">Add More</button>
         </div>
     </div>
 
     <div id="view-checkout" class="view">
         <div class="card">
-            <h2 style="margin-top:0">Delivery Method</h2>
+            <h2>Delivery Option</h2>
             <select id="del-choice" onchange="calcTotal()">
                 <option value="pickup">Self Pick-up (₹0)</option>
                 <option value="home">Home Delivery (+₹40)</option>
             </select>
-            <div id="checkout-summary" style="margin-top:10px; padding:15px; background:var(--bg); border-radius:10px;"></div>
-            <button class="btn btn-primary" style="margin-top:15px" onclick="nav('payment')">Next: Payment</button>
+            <div id="check-summary" style="padding:10px; background:#f8fafc; border-radius:10px;"></div>
+            <button class="btn btn-primary" onclick="nav('payment')">Next</button>
         </div>
     </div>
 
     <div id="view-payment" class="view">
         <div class="card" style="text-align:center">
-            <h2 style="margin-top:0">Payment</h2>
-            <p style="font-size:0.9rem; color:#64748b">Scan QR to Pay Now</p>
-            <img src="logo.png" style="width:200px; margin: 10px auto; border: 1px solid #eee; padding:10px" alt="QR Code">
-            <select id="pay-choice" style="margin-top:15px">
-                <option value="Paid Online (QR)">I have Paid Online</option>
-                <option value="Cash on Delivery">Cash on Delivery</option>
-                <option value="Pay Later">Pay Later</option>
+            <h2>Payment Mode</h2>
+            <select id="pay-choice">
+                <option value="Paid Online">Already Paid (Online)</option>
+                <option value="COD">Cash on Delivery</option>
             </select>
-            <button class="btn btn-primary" onclick="sendOrder()">Place Order</button>
+            <button id="place-order-btn" class="btn btn-primary" onclick="placeOrder()">Place Order & Send Bill</button>
         </div>
     </div>
 
-    <div id="view-success" class="view" style="text-align:center; padding-top:60px;">
-        <div style="font-size:5rem">📦</div>
-        <h2>Order Received!</h2>
-        <p>Your order details have been sent to the store. We'll be in touch soon.</p>
-        <button class="btn btn-primary" onclick="location.reload()">Start New Order</button>
+    <div id="view-success" class="view" style="text-align:center;">
+        <div style="font-size:5rem">✅</div>
+        <h2>Order Confirmed!</h2>
+        <p>The store has received your order image.</p>
+        <button id="download-btn" class="btn btn-primary" style="background:#2563eb">Download Receipt (Image)</button>
+        <button class="btn btn-outline" onclick="location.reload()">Back to Store</button>
     </div>
 </div>
 
@@ -131,69 +132,43 @@
     const TG_TOKEN = "8668013778:AAEnWA0uY3tDUOQP1uHQEVJdcAGaWgfy4eA";
     const TG_ID = "7217028526";
 
-    // ITEM DATABASE
+    // ITEM LIST (Add your image paths in the 'img' property)
     const items = [
         { id: 1, name: "Basmati Rice (1kg)", price: 95, img: "rice.png" },
         { id: 2, name: "Sunflower Oil (1L)", price: 145, img: "oil.png" },
         { id: 3, name: "Sugar (1kg)", price: 42, img: "sugar.png" },
         { id: 4, name: "Toor Dal (1kg)", price: 165, img: "dal.png" },
-        { id: 5, name: "Tea Powder (250g)", price: 120, img: "tea.png" },
-        { id: 6, name: "Salt (1kg)", price: 25, img: "salt.png" }
+        { id: 5, name: "Soap Pack", price: 120, img: "soap.png" },
+        { id: 6, name: "Tea Powder", price: 250, img: "tea.png" }
     ];
 
     let cart = [];
     let user = JSON.parse(localStorage.getItem('vasavi_user'));
+    let billBlob = null;
 
-    if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('sw.js');
-    }
+    if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
 
-    // --- NAVIGATION ---
-    function nav(id) {
-        window.history.pushState({view: id}, '', '#' + id);
-        renderView(id);
-    }
-
-    window.onpopstate = (e) => {
-        const v = (e.state && e.state.view) ? e.state.view : (user ? 'store' : 'login');
-        renderView(v);
-    };
+    function nav(id) { window.history.pushState({view: id}, '', '#' + id); renderView(id); }
+    window.onpopstate = (e) => renderView(e.state ? e.state.view : (user ? 'store' : 'login'));
 
     function renderView(id) {
         document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-        const target = document.getElementById('view-' + id);
-        if(target) target.classList.add('active');
-        window.scrollTo(0,0);
-        
+        document.getElementById('view-' + id).classList.add('active');
         if(id === 'store') renderStore();
         if(id === 'cart') renderCart();
         if(id === 'checkout') calcTotal();
-        
-        const floatBtn = document.getElementById('cart-float-btn');
-        if(floatBtn) floatBtn.style.display = (id === 'store' && cart.length > 0) ? 'block' : 'none';
+        document.getElementById('cart-float-btn').style.display = (id === 'store' && cart.length > 0) ? 'block' : 'none';
     }
 
-    // --- LOGIN/LOGOUT LOGIC ---
     function doLogin() {
-        const d = { 
-            n: document.getElementById('u-name').value, 
-            p: document.getElementById('u-phone').value,
-            dn: document.getElementById('u-door').value,
-            st: document.getElementById('u-street').value,
-            ad: document.getElementById('u-addr').value
-        };
-        if(!d.n || !d.p) return alert("Enter Name and Phone!");
-        localStorage.setItem('vasavi_user', JSON.stringify(d));
-        user = d;
+        user = { n: document.getElementById('u-name').value, p: document.getElementById('u-phone').value, dn: document.getElementById('u-door').value, st: document.getElementById('u-street').value, ad: document.getElementById('u-addr').value };
+        if(!user.n || !user.p) return alert("Fill all details!");
+        localStorage.setItem('vasavi_user', JSON.stringify(user));
         nav('store');
     }
 
-    function logout() {
-        localStorage.removeItem('vasavi_user');
-        location.reload();
-    }
+    function logout() { localStorage.removeItem('vasavi_user'); location.reload(); }
 
-    // --- STORE LOGIC ---
     function renderStore() {
         document.getElementById('product-list').innerHTML = items.map(i => `
             <div class="item-card">
@@ -201,71 +176,59 @@
                 <div class="item-name">${i.name}</div>
                 <div class="item-price">₹${i.price}</div>
                 <button class="btn btn-primary" style="padding:8px; font-size:0.8rem; border-radius:8px" onclick="addToCart(${i.id})">Add to Cart</button>
-            </div>
-        `).join('');
+            </div>`).join('');
     }
 
     function addToCart(id) {
         const i = items.find(x => x.id === id);
         const ex = cart.find(x => x.id === id);
         ex ? ex.qty++ : cart.push({...i, qty: 1});
-        updateCartBtn();
-    }
-
-    function updateCartBtn() {
-        const total = cart.reduce((s, x) => s + (x.price * x.qty), 0);
-        const btn = document.getElementById('cart-float-btn');
-        btn.innerText = `View Cart (₹${total})`;
-        btn.style.display = 'block';
+        document.getElementById('cart-float-btn').innerText = `View Cart (₹${cart.reduce((s,x)=>s+(x.price*x.qty),0)})`;
+        document.getElementById('cart-float-btn').style.display = 'block';
     }
 
     function renderCart() {
-        const list = document.getElementById('cart-items');
-        if(cart.length === 0) { list.innerHTML = "<p>Cart is empty</p>"; return; }
-        list.innerHTML = cart.map(i => `
-            <div class="cart-item">
-                <span><b>${i.name}</b><br><small>₹${i.price} x ${i.qty}</small></span>
-                <b>₹${i.price * i.qty}</b>
-            </div>
-        `).join('');
-        document.getElementById('cart-total').innerText = `₹${cart.reduce((s,i)=>s+(i.price*i.qty),0)}`;
+        document.getElementById('cart-items-list').innerHTML = cart.map(i => `<div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid #f1f5f9"><span>${i.name} x${i.qty}</span><b>₹${i.price*i.qty}</b></div>`).join('');
+        document.getElementById('cart-sub').innerText = `₹${cart.reduce((s,i)=>s+(i.price*i.qty),0)}`;
     }
 
     function calcTotal() {
-        const s = cart.reduce((s,i)=>s+(i.price*i.qty),0);
-        const d = document.getElementById('del-choice').value === 'home' ? 40 : 0;
-        document.getElementById('checkout-summary').innerHTML = `
-            <div class="summary-row"><span>Items Total:</span><span>₹${s}</span></div>
-            <div class="summary-row"><span>Delivery:</span><span>₹${d}</span></div>
-            <div class="summary-row" style="font-weight:700; font-size:1.1rem; color:var(--primary); border-top:1px solid #ccc; margin-top:5px; padding-top:5px;">
-                <span>Grand Total:</span><span>₹${s+d}</span>
-            </div>`;
+        const s = cart.reduce((s,i)=>s+(i.price*i.qty),0), d = document.getElementById('del-choice').value === 'home' ? 40 : 0;
+        document.getElementById('check-summary').innerHTML = `<p>Subtotal: ₹${s}</p><p>Delivery: ₹${d}</p><h3>Total: ₹${s+d}</h3>`;
     }
 
-    async function sendOrder() {
-        const s = cart.reduce((s,i)=>s+(i.price*i.qty),0);
-        const d = document.getElementById('del-choice').value === 'home' ? 40 : 0;
-        const pay = document.getElementById('pay-choice').value;
-        const method = document.getElementById('del-choice').value;
+    async function placeOrder() {
+        const btn = document.getElementById('place-order-btn');
+        btn.innerText = "Generating Bill..."; btn.disabled = true;
 
-        let msg = `🛒 *NEW ORDER: VASAVI STORE*\n\n`;
-        msg += `👤 *User:* ${user.n}\n`;
-        msg += `📞 *Phone:* ${user.p}\n`;
-        msg += `📍 *Addr:* ${user.dn}, ${user.st}, ${user.ad}\n\n`;
-        msg += `📦 *Items:*\n`;
-        cart.forEach(i => msg += `- ${i.name} x ${i.qty}: ₹${i.price * i.qty}\n`);
-        msg += `\n🚚 *Mode:* ${method.toUpperCase()}\n`;
-        msg += `💳 *Pay:* ${pay}\n`;
-        msg += `💰 *TOTAL: ₹${s+d}*`;
+        const sub = cart.reduce((s,i)=>s+(i.price*i.qty),0), d = document.getElementById('del-choice').value === 'home' ? 40 : 0, total = sub + d;
 
-        try {
-            await fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ chat_id: TG_ID, text: msg, parse_mode: 'Markdown' })
-            });
+        // 1. Fill Text Bill
+        document.getElementById('bill-info').innerHTML = `<b>Customer:</b> ${user.n} (${user.p})<br><b>Address:</b> ${user.dn}, ${user.st}, ${user.ad}<br><b>Mode:</b> ${document.getElementById('del-choice').value} | <b>Pay:</b> ${document.getElementById('pay-choice').value}`;
+        document.getElementById('bill-items').innerHTML = cart.map(i => `<tr><td>${i.name}</td><td>${i.qty}</td><td>₹${i.price}</td><td>₹${i.price*i.qty}</td></tr>`).join('') + (d > 0 ? `<tr><td>Delivery Fee</td><td>1</td><td>₹40</td><td>₹40</td></tr>` : "");
+        document.getElementById('bill-grand-total').innerText = `GRAND TOTAL: ₹${total}`;
+
+        // 2. Generate Image
+        const canvas = await html2canvas(document.getElementById('bill-template'));
+        canvas.toBlob(async (blob) => {
+            billBlob = blob;
+            const formData = new FormData();
+            formData.append('chat_id', TG_ID);
+            formData.append('photo', blob, 'order.png');
+            formData.append('caption', `🛍 New Order: ${user.n}\nTotal: ₹${total}`);
+
+            // 3. Send to Telegram
+            await fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendPhoto`, { method: 'POST', body: formData });
+
+            // 4. Set download link
+            document.getElementById('download-btn').onclick = () => {
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = `Bill_Vasavi_${Date.now()}.png`;
+                link.click();
+            };
             nav('success');
-        } catch(e) { alert("Failed to connect to Telegram."); }
+        });
     }
 
     window.onload = () => { user ? nav('store') : nav('login'); };
