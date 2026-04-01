@@ -131,6 +131,11 @@ body { font-family:'Outfit',sans-serif; background:var(--bg); color:var(--text);
 .progress { display:flex; align-items:center; justify-content:center; margin-bottom:20px; }
 .toast { position:fixed; bottom:92px; left:50%; transform:translateX(-50%); background:#111827; color:#fff; font-size:0.83rem; padding:9px 18px; border-radius:99px; opacity:0; pointer-events:none; transition:0.25s; z-index:999; white-space:nowrap; }
 .toast.show { opacity:1; transform:translateX(-50%) translateY(-5px); }
+.promo-msg { font-size:0.8rem; margin-top:7px; display:flex; align-items:center; gap:6px; }
+.promo-msg.ok { color:var(--green); }
+.promo-msg.fail { color:var(--red); }
+.sec-label { font-size:0.72rem; font-weight:600; color:var(--muted); text-transform:uppercase; letter-spacing:0.6px; margin-bottom:10px; }
+.pay-list { display:flex; flex-direction:column; gap:10px; }
 
 #bill-tpl { position:absolute; left:-9999px; top:0; width:480px; padding:36px; background:#fff; font-family:'Outfit',sans-serif; }
 .bt-head { text-align:center; padding-bottom:16px; border-bottom:2px solid #111; margin-bottom:16px; }
@@ -140,6 +145,8 @@ body { font-family:'Outfit',sans-serif; background:var(--bg); color:var(--text);
 .bt-table { width:100%; border-collapse:collapse; font-size:0.85rem; }
 .bt-table th, .bt-table td { padding:7px 6px; border-bottom:1px solid #eee; text-align:left; }
 .bt-total { font-size:1.1rem; font-weight:800; text-align:right; margin-top:12px; }
+.bt-oid { font-size:0.75rem; color:#555; margin-bottom:6px; }
+.bt-meta { font-size:0.82rem; line-height:1.6; margin-bottom:14px; border-bottom:1px solid #eee; padding-bottom:10px; }
 </style>
 </head>
 <body>
@@ -240,7 +247,7 @@ body { font-family:'Outfit',sans-serif; background:var(--bg); color:var(--text);
 
   <!-- PAYMENT -->
   <div class="view" id="view-payment">
-    <div class="card"><div class="card-title">Payment Method</div><div class="pay-list"><div class="pay-opt sel" onclick="selectPay('gpay')">GPay / UPI</div><div class="pay-opt" onclick="selectPay('cod')">Cash on Delivery</div><div class="pay-opt" onclick="selectPay('khata')">Khata (Credit)</div></div></div>
+    <div class="card"><div class="card-title">Payment Method</div><div class="pay-list"><div class="pay-opt sel" onclick="selectPay('gpay')"><div class="radio"></div><div><div style="font-weight:700;font-size:0.9rem">GPay / UPI</div><div style="font-size:0.75rem;color:var(--muted)">Instant payment</div></div></div><div class="pay-opt" onclick="selectPay('cod')"><div class="radio"></div><div><div style="font-weight:700;font-size:0.9rem">Cash on Delivery</div><div style="font-size:0.75rem;color:var(--muted)">Pay at delivery</div></div></div><div class="pay-opt" onclick="selectPay('khata')"><div class="radio"></div><div><div style="font-weight:700;font-size:0.9rem">Khata (Credit)</div><div style="font-size:0.75rem;color:var(--muted)">Pay later</div></div></div></div></div>
     <div class="card"><div id="payment-summary"></div><button class="btn btn-green" id="place-btn" onclick="placeOrder()">Place Order</button></div>
   </div>
 
@@ -339,10 +346,9 @@ function updateFloat() {
 // ==================== HISTORY API NAVIGATION ====================
 let curView = 'login';
 function navigateTo(view, options = { replace: false }) {
-  if (view === curView) return;
   const state = { view, store: currentStore, activeCat: storeActiveCat, search: storeSearch };
   if (options.replace) history.replaceState(state, '', `#${view}`);
-  else history.pushState(state, '', `#${view}`);
+  else if (view !== curView) history.pushState(state, '', `#${view}`);
   showView(view);
 }
 function showView(view) {
@@ -382,7 +388,7 @@ function updateHeader() {
   const showSwitch = curView === 'store' && currentStore;
   document.getElementById('hdr-switch').style.display = showSwitch ? 'flex' : 'none';
   document.getElementById('hdr-logout').style.display = (curView === 'select-store' || curView === 'store') ? 'flex' : 'none';
-  document.getElementById('hdr-logo').style.display = curView === 'login' ? 'none' : 'block';
+  document.getElementById('hdr-logo').style.display = curView === 'login' ? 'none' : '';
 }
 window.addEventListener('popstate', (event) => {
   if (event.state) {
@@ -435,7 +441,6 @@ function selectStore(store) {
   document.getElementById('promo-input').value = '';
   document.getElementById('promo-msg').innerHTML = '';
   navigateTo('store', { replace: true });
-  renderStore();
 }
 
 // ==================== STORE RENDERING ====================
